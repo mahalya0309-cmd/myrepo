@@ -1,14 +1,3 @@
-{
-  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-  "contentVersion": "1.0.0.0",
-  "parameters": {
-    "aksName": {
-      "type": "string",
-      "defaultValue": "aksCluster1",
-      "metadata": {
-        "description": "Name of the AKS cluster"
-      }
-    },
     "dnsPrefix": {
       "type": "string",
       "defaultValue": "akscluster1dns",
