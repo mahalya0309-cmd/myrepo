@@ -1,0 +1,84 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "aksName": {
+      "type": "string",
+      "defaultValue": "aksCluster1",
+      "metadata": {
+        "description": "Name of the AKS cluster"
+      }
+    },
+    "dnsPrefix": {
+      "type": "string",
+      "defaultValue": "akscluster1dns",
+      "metadata": {
+        "description": "DNS prefix for the AKS cluster"
+      }
+    },
+    "adminUsername": {
+      "type": "string",
+      "defaultValue": "azureuser",
+      "metadata": {
+        "description": "Admin username for Linux nodes"
+      }
+    },
+    "sshKeyData": {
+      "type": "string",
+      "metadata": {
+        "description": "SSH public key for Linux node access"
+      }
+    },
+    "agentCount": {
+      "type": "int",
+      "defaultValue": 1,
+      "metadata": {
+        "description": "Number of nodes in the system pool"
+      }
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.ContainerService/managedClusters",
+      "apiVersion": "2025-01-01",
+      "name": "[parameters('aksName')]",
+      "location": "[resourceGroup().location]",
+      "identity": {
+        "type": "SystemAssigned"
+      },
+      "properties": {
+        "dnsPrefix": "[parameters('dnsPrefix')]",
+        "kubernetesVersion": "1.27.7",
+        "agentPoolProfiles": [
+          {
+            "name": "agentpool",
+            "count": "[parameters('agentCount')]",
+            "vmSize": "Standard_B2s",
+            "osType": "Linux",
+            "mode": "System"
+          }
+        ],
+        "linuxProfile": {
+          "adminUsername": "[parameters('adminUsername')]",
+          "ssh": {
+            "publicKeys": [
+              {
+                "keyData": "[parameters('sshKeyData')]"
+              }
+            ]
+          }
+        },
+        "networkProfile": {
+          "networkPlugin": "azure",
+          "loadBalancerSku": "standard"
+        }
+      }
+    }
+  ],
+  "outputs": {
+    "aksClusterName": {
+      "type": "string",
+      "value": "[parameters('aksName')]"
+    }
+  }
+}
